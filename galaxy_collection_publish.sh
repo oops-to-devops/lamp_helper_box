@@ -28,5 +28,5 @@ print_whi () { local i; for i in "$@"; do echo -e "${C_WHI}${i}${C_NOC}"; done }
 trap 'rm -rf ${TMP_OUTPUT}' \
   EXIT SIGHUP SIGINT SIGQUIT SIGPIPE SIGTERM
 
-release=$(mazer build | tail -n1 | awk '{print $NF}')
-mazer publish --api-key=${galaxy_api_key} ${release}
+release=$(ansible-galaxy collection build | tail -n1 | awk '{print $NF}')
+ansible-galaxy collection publish --api-key=${galaxy_api_key} ${release}
