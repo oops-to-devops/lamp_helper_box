@@ -6,3 +6,5 @@ local_*.sh
 releases
 __pycache__
 *.pyc
+*.bak
+*.tar.gz
