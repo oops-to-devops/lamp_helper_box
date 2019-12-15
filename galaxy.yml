@@ -1,7 +1,7 @@
 namespace: "softasap"
 name: "lamp_helper_box"
 description: Installs set of helper tools for vagrant box produce
-version: 0.2.0
+version: 0.3.0
 readme: "Readme.md"
 authors:
     - "Vyacheslav Voronenko"

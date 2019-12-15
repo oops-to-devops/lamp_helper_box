@@ -8,3 +8,6 @@
   name: sa_dev_pgweb
 - src:  softasap.sa_lamp_dev
   name: sa_lamp_dev
+- src: softasap.sa_code_server
+  name: sa_code_server
+
