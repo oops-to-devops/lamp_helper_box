@@ -1,0 +1,14 @@
+[Unit]
+Description=cdr/code-server service
+Documentation=https://github.com/cdr/code-server
+After=network.target network-online.target
+
+[Service]
+Type=simple
+User={{ code_server_user }}
+EnvironmentFile={{ code_server_install_dir }}/env
+ExecStart={{ code_server_install_dir }}/code-server --disable-telemetry --auth password --host {{ code_server_host }} --port {{ code_server_port }} {{ code_server_work_dir }}
+WorkingDirectory=~
+
+[Install]
+WantedBy=multi-user.target

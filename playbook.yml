@@ -46,14 +46,28 @@
         pgweb_extra_params: "{{ box_pgweb_extra_params }}",
         pgweb_bind_address: "{{ box_pgweb_bind_address }}",
         pgweb_bind_port: "{{ box_pgweb_bind_port }}",
-        option_pgweb_install_service: "{{ box_option_pgweb_install_service }}"
+        option_pgweb_install_service: "{{ box_option_pgweb_install_service }}",
+        when: option_sa_dev_pgweb
       }
     - {
         name: "sa_mailhog",
         mailhog_version: "{{ box_mailhog_version }}",
         mailhog_env: "{{ box_mailhog_env }}",
         mailhog_params: "{{ box_mailhog_params }}",
-        mailhog_users: "{{ box_mailhog_users }}"
+        mailhog_users: "{{ box_mailhog_users }}",
+        when: option_sa_mailhog
+      }
+    - {
+        name: "sa_code_server",
+        code_server_version: "{{ box_code_server_version }}",
+        code_server_data_dir: "{{ box_code_server_data_dir }}",
+        code_server_work_dir: "{{ box_code_server_work_dir }}",
+        code_server_password: "{{ box_code_server_password }}",
+        code_server_user: "{{ box_code_server_user }}",
+        code_server_host: "{{ box_code_server_host }}",
+        code_server_port: "{{ box_code_server_port }}",
+#        code_server_install_dir: "{{ box_code_server_install_dir }}",
+        when: option_sa_code_server
       }
     - {
         name: "sa_lamp_dev",

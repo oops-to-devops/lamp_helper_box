@@ -1,5 +1,9 @@
 ---
 
+option_sa_dev_pgweb: true
+option_sa_mailhog: true
+option_sa_code_server: true
+
 # mailhog
 box_mailhog_version: 1.0.0
 box_mailhog_env: {}
@@ -19,15 +23,21 @@ box_pgweb_bind_address: 127.0.0.1
 box_pgweb_bind_port: 8081
 
 box_option_pgweb_install_service: true
-
 #/pgweb
-
 
 # lamp dev tools
 box_lamp_dev_deployer_user: "{{ ansible_user_id }}"
-
 box_lamp_dev_dashboard_php_pool_user: "{{ ansible_user_id }}"
-
 box_lamp_dev_tools_php_family: "7.2"
-
 # /lapdevtools
+
+# codeserver
+box_code_server_version: "2.1692-vsc1.39.2"
+box_code_server_data_dir: "/home/{{ code_server_user }}/.local/share/code-server"
+box_code_server_work_dir: "/home/{{ code_server_user }}/"
+box_code_server_password: "q"
+box_code_server_user: "{{ ansible_user_id }}"
+box_code_server_host: 0.0.0.0
+box_code_server_port: 8880
+box_code_server_install_dir: /opt/code_server
+# /codeserver

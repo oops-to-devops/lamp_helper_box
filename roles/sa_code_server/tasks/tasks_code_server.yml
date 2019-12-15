@@ -1,0 +1,77 @@
+---
+  - name: Code Server | Check if is present
+    command: "{{ code_server_install_dir }}/code-server"
+    ignore_errors: yes
+    register: code_server_present
+    tags:
+      - codeserver
+      - skip_ansible_lint
+
+  - name: Code Server | Create installation dir
+    file:
+      path: "{{ code_server_install_dir }}"
+      state: directory
+    become: yes
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - debug: msg="https://github.com/cdr/code-server/releases/download/{{ code_server_version }}/code-server{{ code_server_version }}-linux-x86_64.tar.gz"
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - name: Code Server | Download code-server pre-compiled binary - be patient, around 50M+, few mins
+    unarchive:
+      src: "https://github.com/cdr/code-server/releases/download/{{ code_server_version }}/code-server{{ code_server_version }}-linux-x86_64.tar.gz"
+      dest: "{{ code_server_install_dir }}"
+      remote_src: yes
+      extra_opts:
+        - --strip-components=1
+        - --wildcards
+        - "*/code-server"
+    become: yes
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - name: Code Server | Template startup script
+    template:
+      src: code_server.systemd.j2
+      dest: "/etc/systemd/system/code-server.service"
+    become: yes
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - name: Code Server | Service Env file
+    template:
+      src: env.j2
+      dest: "{{ code_server_install_dir }}/env"
+      owner: "{{ code_server_user }}"
+      group: root
+      mode: "u=r,g=rw,o="
+    become: yes
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - name: Code Server | Ensure data dir exists
+    file:
+      path: "{{ code_server_data_dir }}"
+      state: directory
+      owner: "{{ code_server_user }}"
+    become: yes
+    when: code_server_present is failed
+    tags:
+      - codeserver
+
+  - name: Code Server | Enable code-server service
+    service:
+      name: code-server
+      enabled: yes
+      state: "started"
+    become: yes
+    when: docker_test is not defined and code_server_present is failed
+    tags:
+      - codeserver
