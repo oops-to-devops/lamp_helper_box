@@ -1,0 +1,10 @@
+- src:  softasap.sa-mailhog
+  name: sa_mailhog
+- src:  softasap.sa-php-pharables
+  name: sa_php_pharables
+- src:  softasap.sa-lamp-metrics
+  name: sa_lamp_metrics
+- src:  softasap.sa-dev-pgweb
+  name: sa_dev_pgweb
+- src:  softasap.sa_lamp_dev
+  name: sa_lamp_dev

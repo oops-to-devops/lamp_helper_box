@@ -1,0 +1,67 @@
+---
+- hosts: lamp_helper_box
+  gather_facts: False
+
+  vars:
+    - root_dir: "{{ playbook_dir }}"
+    - shared_dir: "{{ playbook_dir }}/../shared"
+
+  pre_tasks:
+    - debug: msg="Pre tasks section for {{ansible_host}}"
+
+    - set_fact:
+        remote_ip_address: "{{ ansible_host }}"
+
+    - name: include default vars
+      include_vars: "defaults/main.yml"
+
+    - name: Install fallback python for Ansible if needed
+      raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python-minimal)
+      become: true
+      changed_when: false
+
+    - name:  UNPRIVILEGED USERS | Get acl dependency (ansible unprivileged user operations magic)
+      apt: pkg="acl"
+      become: yes
+
+    - name: gather facts
+      setup:
+
+    - name: Check for common pretasks
+      local_action: stat path="{{shared_dir}}/common_pretasks.yml"
+      register: common_pretasks_exists
+      tags: always
+
+    - name: Include common pretasks
+      include_tasks: "{{shared_dir}}/common_pretasks.yml"
+      when: common_pretasks_exists.stat.exists == true
+      tags: always
+
+  roles:
+    - {
+        name: "sa_dev_pgweb",
+        pgweb_version: "{{ box_pgweb_version }}",
+        pgweb_user: "{{ box_pgweb_user }}",
+        pgweb_group: "{{ box_pgweb_group }}",
+        pgweb_extra_params: "{{ box_pgweb_extra_params }}",
+        pgweb_bind_address: "{{ box_pgweb_bind_address }}",
+        pgweb_bind_port: "{{ box_pgweb_bind_port }}",
+        option_pgweb_install_service: "{{ box_option_pgweb_install_service }}"
+      }
+    - {
+        name: "sa_mailhog",
+        mailhog_version: "{{ box_mailhog_version }}",
+        mailhog_env: "{{ box_mailhog_env }}",
+        mailhog_params: "{{ box_mailhog_params }}",
+        mailhog_users: "{{ box_mailhog_users }}"
+      }
+    - {
+        name: "sa_lamp_dev",
+        deployer_user: "{{ box_lamp_dev_deployer_user }}",
+        dashboard_php_pool_user: "{{ box_lamp_dev_dashboard_php_pool_user }}",
+        lamp_dev_tools_php_family: "{{ box_lamp_dev_tools_php_family }}"
+      }
+
+  tasks:
+
+    - debug: msg="Tasks section"

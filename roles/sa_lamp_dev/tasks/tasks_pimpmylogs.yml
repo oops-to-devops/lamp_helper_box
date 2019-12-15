@@ -1,0 +1,29 @@
+---
+
+- name: PimpMyLog |  Make writable for web process, if needed
+  file:
+    path: "{{ pimpmylog_dir }}"
+    state: directory
+    owner: "{{ deployer_user }}"
+    group: "www-data"
+  when: not pimpmylog_unsecure
+  become: yes
+
+- name: PimpMyLog |  Make writable for web process, if needed
+  file:
+    path: "{{ pimpmylog_dir }}"
+    state: directory
+    mode: 0777
+    owner: "{{ deployer_user }}"
+    group: "www-data"
+  when: pimpmylog_unsecure
+  become: yes
+
+- name: PimpMyLog | Clone repo
+  git:
+    dest: "{{ pimpmylog_dir }}"
+    repo: "https://github.com/potsky/PimpMyLog.git"
+    version: "{{ pimpmylog_version }}"
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ deployer_user }}"

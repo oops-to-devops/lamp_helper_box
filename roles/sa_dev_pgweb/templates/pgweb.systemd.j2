@@ -1,0 +1,13 @@
+
+[Unit]
+Description=pgweb - Cross-platform client for PostgreSQL databases
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ pgweb_install_dir }}/pgweb --sessions --bind={{ pgweb_bind_address }} --listen={{ pgweb_bind_port }}
+Restart=on-abort
+User={{ pgweb_user }}
+
+[Install]
+WantedBy=multi-user.target

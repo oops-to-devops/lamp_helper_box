@@ -1,0 +1,93 @@
+---
+
+  - name: PGWEB | Check if is present
+    command: test -x {{ pgweb_install_dir }}/pgweb
+    ignore_errors: yes
+    register: pgweb_present
+    tags:
+      - pgweb
+
+  - name: PGWEB | Create pgweb group
+    group: name="{{ pgweb_group }}" state="present"
+    become: yes
+    when: option_pgweb_install_service
+    tags:
+      - pgweb
+
+  - name: PGWEB | Create pgweb user
+    user:
+      name: "{{ pgweb_user }}"
+      group: "{{ pgweb_group }}"
+      comment: "PGWeb user"
+      shell: "/bin/nologin"
+      createhome: "false"
+    become: yes
+    when: option_pgweb_install_service
+    tags:
+      - pgweb
+
+  - name: PGWEB | create target directory
+    file: path="{{ pgweb_install_dir }}" state="directory"
+    become: yes
+    when: pgweb_present is failed
+    tags:
+      - pgweb
+
+  - name: PGWEB | Install dependencies
+    apt: pkg=unzip
+    become: yes
+    when: pgweb_present is failed
+    tags:
+      - pgweb
+
+  - name: PGWEB | Download distribution
+    get_url: url="https://github.com/sosedoff/pgweb/releases/download/v{{ pgweb_version|default('0.11.3') }}/pgweb_linux_amd64.zip" dest="/tmp/pgweb_linux_amd64.zip"
+    become: yes
+    when: pgweb_present is failed
+    tags:
+      - pgweb
+
+  - name: PGWEB | Unpack distribution
+    shell: "unzip /tmp/pgweb_linux_amd64.zip -d {{ pgweb_install_dir }}"
+    when: pgweb_present is failed
+    become: yes
+    tags:
+      - pgweb
+
+  - name: PGWEB | Link executable /opt/pgweb/pgweb
+    file: src="{{ pgweb_install_dir }}/pgweb_linux_amd64" dest="{{ pgweb_install_dir }}/pgweb" state=link mode="u=rwx,g=rx,o=rx"
+    become: yes
+    when: pgweb_present is failed
+    tags:
+      - pgweb
+
+  - block:
+
+    - name: PGWEB | Create upstart
+      template:
+        src: "templates/pgweb.upstart.j2"
+        dest: /etc/init/pgweb.conf
+        mode: 0644
+      when: ansible_service_mgr == "upstart" and docker_test is not defined
+      become: yes
+      tags:
+        - pgweb
+
+    - name: PGWEB | Create systemd service
+      template:
+        src: "templates/pgweb.systemd.j2"
+        dest: /etc/systemd/system/pgweb.service
+        mode: 0644
+      when: ansible_service_mgr == "systemd" and docker_test is not defined
+      become: yes
+      tags:
+        - pgweb
+
+    - name: PGWEB | Restart
+      service: name=pgweb state=restarted enabled="yes"
+      when: ansible_service_mgr == "systemd" and docker_test is not defined
+      become: yes
+      tags:
+        - pgweb
+
+    when: option_pgweb_install_service

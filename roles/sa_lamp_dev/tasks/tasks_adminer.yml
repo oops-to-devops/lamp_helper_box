@@ -1,0 +1,18 @@
+---
+# Install Adminer.
+- name: Adminer | create target folder
+  file:
+    path: "{{ adminer_dir }}"
+    state: directory
+    recurse: true
+    owner:
+  become: yes
+
+- name: Download Adminer to configured directory.
+  get_url:
+    url: https://www.adminer.org/latest.php
+    dest: "{{ adminer_dir }}/index.php"
+    mode: 0644
+    owner: "{{ deployer_user }}"
+    group: "www-data"
+  become: yes

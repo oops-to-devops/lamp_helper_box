@@ -1,0 +1,11 @@
+
+description "PgWeb as a Service for Ubuntu 14.04 With Upstart"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+setuid {{ pgweb_user }}
+#setgid www-data
+
+exec {{ pgweb_install_dir }}/pgweb --bind={{ pgweb_bind_address }} --listen={{ pgweb_bind_port }} {{ pgweb_extra_params }}

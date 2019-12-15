@@ -1,0 +1,56 @@
+server {
+listen 80 default;
+listen [::]:80 default;
+
+server_name _;
+
+access_log /var/log/nginx/tools_access.log;
+error_log /var/log/nginx/tools_error.log;
+
+root {{ lamp_dev_tools_base_dir }}/;
+
+index index.php index.html index.htm index.nginx-debian.html;
+
+location ~* ^/pgweb/ {
+    rewrite ^/pgweb/(.*) /$1 break;
+    proxy_pass http://localhost:8081;
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Host $host;
+}
+
+location ~* ^/mailhog/ {
+    rewrite ^/mailhog/(.*) /$1 break;
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Host $host;
+    chunked_transfer_encoding on;
+    proxy_set_header X-NginX-Proxy true;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_http_version 1.1;
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_pass http://localhost:8025;
+}
+
+
+# serve static files directly
+location ~* \.(jpg|jpeg|gif|css|png|js|ico)$ {
+  access_log off;
+  log_not_found off;
+}
+
+location ~ \.php$ {
+  # With php-fpm (or other unix sockets);
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+  include fastcgi_params;
+  fastcgi_pass unix:/run/php/dashboard-fpm.sock;
+  # With php-fpm (or other unix sockets);
+}
+
+location ~ /\.ht {
+  deny all;
+}
+
+}

@@ -1,0 +1,16 @@
+---
+- src: softasap.sa-include
+  name: sa_include
+- src: softasap.sa-nginx
+  name: sa_nginx
+- src: softasap.sa-php-fpm
+  name: sa_php_fpm
+- src: softasap.sa-postgres
+  name: sa_postgres
+- src: softasap.sa-dev-pgweb
+  name: sa_dev_pgweb
+- src: softasap.sa-mailhog
+  name: sa_mailhog
+- src: softasap.sa-mariadb
+  name: sa_mariadb
+

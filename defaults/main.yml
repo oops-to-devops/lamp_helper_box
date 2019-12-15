@@ -1,0 +1,33 @@
+---
+
+# mailhog
+box_mailhog_version: 1.0.0
+box_mailhog_env: {}
+box_mailhog_params: ""
+box_mailhog_users: []
+# /pailhog
+
+#pgweb
+box_pgweb_version: "0.11.4"
+box_pgweb_user: pgweb
+box_pgweb_group: pgweb
+box_pgweb_extra_params: " --sessions "
+
+box_pgweb_install_dir: /opt/pgweb
+
+box_pgweb_bind_address: 127.0.0.1
+box_pgweb_bind_port: 8081
+
+box_option_pgweb_install_service: true
+
+#/pgweb
+
+
+# lamp dev tools
+box_lamp_dev_deployer_user: "{{ ansible_user_id }}"
+
+box_lamp_dev_dashboard_php_pool_user: "{{ ansible_user_id }}"
+
+box_lamp_dev_tools_php_family: "7.2"
+
+# /lapdevtools

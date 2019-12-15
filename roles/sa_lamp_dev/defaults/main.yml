@@ -1,0 +1,16 @@
+---
+
+deployer_user: "{{ ansible_user_id }}"
+
+dashboard_php_pool_user: "{{ ansible_user_id }}"
+
+lamp_dev_tools_base_dir: "/var/www/tools"
+
+lamp_dev_tools_php_family: "7.2"
+
+
+pimpmylog_dir: "{{ lamp_dev_tools_base_dir }}/pimpmylog"
+pimpmylog_version: master
+pimpmylog_unsecure: True
+
+adminer_dir: "{{ lamp_dev_tools_base_dir }}/adminer"

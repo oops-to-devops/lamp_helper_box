@@ -1,0 +1,48 @@
+---
+
+  - include_tasks: tasks_pimpmylogs.yml
+
+  - include_tasks: tasks_adminer.yml
+
+  - name: Tools | Template dashboard dependencies
+    unarchive:
+      src: files/dashboard.tar.gz
+      dest: "{{ lamp_dev_tools_base_dir }}"
+      owner: "{{ deployer_user }}"
+      group: "www-data"
+    become: yes
+
+  - name: Tools | Template dashboard index
+    template: src="dashboard.php.j2" dest="{{ lamp_dev_tools_base_dir }}/index.php"
+    become: yes
+
+  - name: Tools | Template dashboard index
+    template: src="info.php.j2" dest="{{ lamp_dev_tools_base_dir }}/info.php"
+    become: yes
+
+  - name: Tools | Template dashboard phppool
+    template: src="pool.conf.j2" dest="/etc/php/{{ lamp_dev_tools_php_family }}/fpm/pool.d/dashboard.conf"
+    when: docker_test is not defined
+    become: yes
+
+  - name: Tools | Template nginx config
+    template: src="tools_http.conf.j2" dest="/etc/nginx/sites-enabled/tools.conf"
+    when: docker_test is not defined
+    become: yes
+
+  - name: Tools | Promote dashboard pool user to the poweruser
+    user:
+      name: "{{ dashboard_php_pool_user }}"
+      groups: adm
+      append: yes
+    become: yes
+
+  - name: Restart php fpm
+    service: name="php{{ lamp_dev_tools_php_family }}-fpm" state="restarted"
+    when: docker_test is not defined
+    become: yes
+
+  - name: Restart webserver
+    service: name="nginx" state="restarted"
+    when: docker_test is not defined
+    become: yes

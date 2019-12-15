@@ -1,0 +1,14 @@
+---
+# defaults file for sa-dev-pgweb
+
+pgweb_version: "0.11.4"
+pgweb_user: pgweb
+pgweb_group: pgweb
+pgweb_extra_params: " --sessions "
+
+pgweb_install_dir: /opt/pgweb
+
+pgweb_bind_address: 127.0.0.1
+pgweb_bind_port: 8081
+
+option_pgweb_install_service: true
