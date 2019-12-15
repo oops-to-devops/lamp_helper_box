@@ -1,6 +1,6 @@
 ---
   - name: Code Server | Check if is present
-    command: "{{ code_server_install_dir }}/code-server"
+    command: "test -x {{ code_server_install_dir }}/code-server"
     ignore_errors: yes
     register: code_server_present
     tags:
@@ -70,7 +70,7 @@
     service:
       name: code-server
       enabled: yes
-      state: "started"
+      state: started
     become: yes
     when: docker_test is not defined and code_server_present is failed
     tags:
